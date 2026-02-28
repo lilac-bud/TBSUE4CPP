@@ -1,43 +1,10 @@
 # Turn Based Strategy (C++ Version)
-Данный проект является развитием [работы](https://github.com/lilac-bud/TBSUE4), проделанной в рамках написания магистерской диссертации. Модуль, написанный на языке Python с использованием tensorflow, был переписан в виде библиотеки на языке C++, что значительно упрощает установку игры на других компьютерах. Сама игра, для которой ранее был использован Blueprints, также была большей частью переписана на C++.
+Данный проект является развитием [работы](https://github.com/lilac-bud/TBSUE4), проделанной в рамках написания магистерской диссертации. Модуль, написанный на языке Python с использованием tensorflow, был переписан в виде [библиотеки](https://github.com/lilac-bud/DQN) на языке C++, что значительно упрощает установку игры на других компьютерах. Сама игра, для которой ранее был использован Blueprints, также была большей частью переписана на C++.
 
-Скомпилированная версия игры находится в папке WindowsNoEditor. Обучение компьютерного игрока (нейронной сети) можно запускать **только** в этой версии. Если обучение запустить в редакторе, это может привести к нехватке памяти и вылету ОС. 
-
-## Библиотека Q
-Написана при помощи библиотек [xtensor](https://github.com/xtensor-stack/xtensor), [xtl](https://github.com/xtensor-stack/xtl) (необходима для работы с xtensor) и [nlohmann/json](https://github.com/nlohmann/json) (для сохранения весов и других параметров) на C++20. Является реализацией [алгоритма DQN](https://github.com/lilac-bud/TBSUE4?tab=readme-ov-file#learning). Для ускорения вычислений используются потоки. Библиотека имеет один хедер Q.h, код которого приведён ниже.
-```C++
-#pragma once
-#include <vector>
-#include <string>
-
-class Q final
-{
-private:
-	class QPrivate* QP;
-
-public:
-	Q(std::size_t field_height, std::size_t field_width, std::size_t channels_number, 
-		const std::string player_id, const std::string filepath);
-	~Q();
-	void soft_reset();
-	int call_network(float prev_reward, const std::vector<float>& state, 
-		const std::vector<float>& actions, std::size_t actions_number);
-	int call_network_debug(float prev_reward, std::size_t actions_number);
-	int call_network_debug(float prev_reward);
-};
-```
-Для вызова конструктора класса Q необходимо указать размеры игрового поля и число каналов, которое соответствует количеству типов информации о ячейке игрового поля (например, находится ли в ней вражеский юнит). Также нужно указать ID игрока, для которого Q будет выбирать действие, и путь к папке для сохранений.
-
-Метод soft_reset вызывается по окончании игры (эпизода обучения) для того, чтобы модель могла быть использована для следующей игры.
-
-Метод call_network принимает на вход предыдущую награду, вектор, являющийся представлением текущего состояния (должен быть размера field_height * field_width * channels_number), ещё один вектор, соответствующий возможным действиям и число действий (то есть размер вектора actions должен быть field_height * field_width * channels_number * actions_number). Возвращает индекс выбранного действия.
-
-Методы call_network_debug используются для отладки и генерируют инпут в зависимости от параметров.
-
-Загрузка и сохранение не вызываются напрямую.
+Обучение компьютерного игрока (нейронной сети) можно запускать **только** в скомпилированной версии программы. Если обучение запустить в редакторе, это может привести к нехватке памяти и вылету ОС.
 
 ## QNetworkPlugin
-Плагин представляет собой посредника между игрой, разработанной на Unreal Engine, и библиотекой Q и включает в себя структуру NetworkInput и компонент QNetworkComponent.
+Плагин представляет собой посредника между игрой, разработанной на Unreal Engine, и библиотекой [dqn](https://github.com/lilac-bud/DQN) и включает в себя структуру NetworkInput и компонент QNetworkComponent.
 ```C++
 #pragma once
 
@@ -67,13 +34,18 @@ NetworkInput включает в себя все необходимые пара
 #include "Components/ActorComponent.h"
 #include "QNetworkComponent.generated.h"
 
+namespace dqn
+{
+	class Q;
+}
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class QNETWORKPLUGIN_API UQNetworkComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 private:
-	class Q* Network;
+	dqn::Q* Network;
 
 protected:
 	virtual void BeginPlay() override;
