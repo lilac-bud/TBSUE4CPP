@@ -6,13 +6,18 @@
 #include "Components/ActorComponent.h"
 #include "QNetworkComponent.generated.h"
 
+namespace dqn
+{
+	class Q;
+}
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class QNETWORKPLUGIN_API UQNetworkComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 private:
-	class Q* Network;
+	dqn::Q* Network;
 
 protected:
 	virtual void BeginPlay() override;

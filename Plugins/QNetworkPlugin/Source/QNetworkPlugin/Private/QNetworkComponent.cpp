@@ -5,7 +5,7 @@
 THIRD_PARTY_INCLUDES_START
 #include <string>
 #include <vector>
-#include "Q.h"
+#include "dqn/Q.h"
 THIRD_PARTY_INCLUDES_END
 #include "NetworkInput.h"
 
@@ -31,7 +31,7 @@ void UQNetworkComponent::BeginPlay()
 
 void UQNetworkComponent::Initialize(int32 FieldHeight, int32 FieldWidth, int32 Channels, int32 PlayerID, FString Filepath)
 {
-	Network = new Q(FieldHeight, FieldWidth, Channels, std::to_string(PlayerID), TCHAR_TO_UTF8(*Filepath));
+	Network = new dqn::Q(FieldHeight, FieldWidth, Channels, std::to_string(PlayerID), TCHAR_TO_UTF8(*Filepath));
 }
 
 void UQNetworkComponent::SoftReset()

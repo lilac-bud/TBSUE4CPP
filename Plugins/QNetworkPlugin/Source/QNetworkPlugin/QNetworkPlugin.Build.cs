@@ -9,8 +9,6 @@ public class QNetworkPlugin : ModuleRules
 	public QNetworkPlugin(ReadOnlyTargetRules Target) : base(Target)
 	{
 		CppStandard = CppStandardVersion.Latest;
-
-		PCHUsage = ModuleRules.PCHUsageMode.UseExplicitOrSharedPCHs;
 		
 		PublicIncludePaths.AddRange(
 			new string[] {
@@ -54,9 +52,7 @@ public class QNetworkPlugin : ModuleRules
 			}
 			);
 
-        PublicIncludePaths.Add(Path.Combine(ModuleDirectory, "ThirdParty"));
-        PublicAdditionalLibraries.Add("$(ModuleDir)/ThirdParty/Q.lib");
-        //RuntimeDependencies.Add("$(ModuleDir)/ThirdParty/Q.dll");
-        //PublicDelayLoadDLLs.Add("$(ModuleDir)/ThirdParty/Q.dll");
+        PublicIncludePaths.Add("$(ModuleDir)/ThirdParty/include");
+        PublicAdditionalLibraries.Add("$(ModuleDir)/ThirdParty/lib/dqn/Q.lib");
     }
 }
